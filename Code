@@ -1,0 +1,683 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+#include<string.h>
+typedef struct node
+{
+	int Roll;
+	int Marks;
+	char name[30];
+	float Cgpa;
+	int Atten;
+}node;
+node id[500];
+static int num_Stu=0;
+static int count=0;
+void access(int Select);
+void sort_String(char a[][30],int length);
+void sort(int a[],int length);
+void insert(char a[30],int j);
+int length(char *a);
+void copy(char a[50]);
+void Add_New(char *filename);
+void copy_file(char *filename,char str[][30],int total,int n);
+void disp(int length);
+void remove(int n,char a[]);
+void Head_Dep(int a,char *filename);
+void update(char *filename);
+void Fac_Dep(int a,char *filename);
+
+void update(char *filename)
+{
+	num_Stu=0;count=0;
+	FILE *fp;
+	fp=fopen(filename,"r");
+	char c[30];
+	while(!feof(fp))
+	{
+	++num_Stu;
+	fgets(c,30,fp);
+	copy(c);
+	}
+	fclose(fp);
+	return;
+}
+void Fac_Dep(int a,char *filename)
+{
+int i,opt,re_opt;
+update(filename);
+system("color 3f");
+
+		printf("\nPlease Enter your choice to choose below Functions\n");
+		printf("1. Display\n");
+		printf("2. To Sort Existing Entries \n3. To Count No. Of Students\n");
+		scanf("%d",&opt);
+				if(opt==1)
+				{	disp(num_Stu);	}
+				else if(opt==2)
+				{
+					system("cls");
+					printf("\nChoose Following Way To Sort\n");
+					printf("\n1. According Roll No.\n2. According Marks\n3. According Name\n");
+					int sort_opt;scanf("%d",&sort_opt);
+					int temp[num_Stu];
+					if(sort_opt==1)
+					{
+					for(i=0;i<num_Stu;i++)
+					{	temp[i]=id[i].Roll;	}
+					sort(temp,num_Stu);disp(num_Stu);
+					}
+					else if(sort_opt==2)
+					{
+					for(i=0;i<num_Stu;i++)
+					{	temp[i]=id[i].Marks;	}
+					sort(temp,num_Stu);disp(num_Stu);
+					
+					}
+					else if(sort_opt==3)
+					{
+					char temp_Name[num_Stu][30];
+					for(i=0;i<num_Stu;i++)
+					{	strcpy(temp_Name[i],id[i].name);	}
+					sort_String(temp_Name,num_Stu);
+					disp(num_Stu);  
+					}
+					
+					else printf("Bad Input%c%c",7,7);
+				}
+				else if(opt==3)
+				{
+					printf("\nThere are total  %d  Students\n",num_Stu);
+				}
+	printf("\nIf You want to perform more functions then click 1 or 0 to Exit\n");			
+	scanf("%d",&re_opt);
+	if(re_opt==1)
+	{Fac_Dep(a,filename);}
+	else return;
+}
+				
+void copy_file(char *filename,char str[][30],int total,int n)
+{
+	int t,i,k=0;
+	FILE *fp=fopen(filename,"w");
+	i=0;
+	
+	while(i<total)
+	{
+		if(i!=n-1 &&i<total-1)
+			{
+			fprintf(fp,"%s",str[k]);++k;
+			if(k==n-1)
+			{++k;}
+			}
+		if(i==total-1 && i!=n-1)
+			{
+			for(t=0;str[i][t+1]!='\0';t++)
+			{	
+				fprintf(fp,"%c",str[i][t]);
+			}
+			fprintf(fp,"%c",str[i][t]);	
+			} 
+		i++;
+	}
+	fclose(fp);
+/*	num_Stu=0;
+	fp=fopen(filename,"r+");
+	char c[30];
+	while(!feof(fp))
+	{
+	++num_Stu;
+	fgets(c,30,fp);
+	copy(c);
+	}
+	fclose(fp);*/
+	update(filename);
+
+//	disp(num_Stu);	
+	return;
+}
+void Add_New(char *filename)
+{
+	FILE *fp2=fopen(filename,"a+");
+	char add[30],ch;
+	printf("\nEnter an entry acc. to following format\nRoll No. Marks Attendance Cgpa Name\n");
+	scanf("%s",add);
+	fprintf(fp2,"\n%s",add);
+	for(int i=1;i<=4;i++)
+	{
+		scanf("%s",add);
+		fprintf(fp2," %s",add);
+	}
+	fclose(fp2);
+	int k;printf("\nIf You want to add one more new entry then please click 1 or 0 to exit\n");
+	scanf("%d",&k);
+	if(k==1){Add_New(filename);}
+	return;
+}
+void Head_Dep(int a,char *filename)
+{
+int i,opt,re_opt;system("cls");
+system("color 3f");
+
+		printf("\nPlease Enter your choice to choose below Functions\n");
+		printf("1. Display\n2. Add New Entry of Student\n3. Remove Existing entry from Database\n");
+		printf("4. To Sort Existing Entries \n5. Search Student\n6. To Count No. Of Students\n");
+		scanf("%d",&opt);
+				if(opt==1)
+				{	disp(num_Stu);	}
+				else if(opt==2)
+				{	Add_New(filename);
+					update(filename);
+			//		disp(num_Stu);
+				}
+				else if(opt==3)
+				{
+				printf("\nYou want to remove an existing entry\n");
+				disp(num_Stu);
+				int rem;
+				printf("\nPlease enter the Sr. No. of student to remove\n\n");	
+				scanf("%d",&rem);
+				remove(rem,filename);
+				//update(filename);
+				//disp(num_Stu);
+				}
+				else if(opt==4)
+				{
+					system("cls");
+					printf("\nChoose Following Way To Sort\n");
+					printf("\n1. Acc. Roll No.\n2. Acc. Marks\n3. Acc. Attendance\n4. Acc. Cgpa\n5. Acc. Name\n");
+					int sort_opt;scanf("%d",&sort_opt);
+					int temp[num_Stu];
+					if(sort_opt==1)
+					{
+					for(i=0;i<num_Stu;i++)
+					{	temp[i]=id[i].Roll;	}
+					sort(temp,num_Stu);//disp(num_Stu);
+					}
+					else if(sort_opt==2)
+					{
+					for(i=0;i<num_Stu;i++)
+					{	temp[i]=id[i].Marks;	}
+					sort(temp,num_Stu);//disp(num_Stu);
+					}
+					else if(sort_opt==3)
+					{
+					for(i=0;i<num_Stu;i++)
+					{	temp[i]=id[i].Atten;	}
+					sort(temp,num_Stu);//disp(num_Stu);
+					}
+					else if(sort_opt==4)
+					{
+					for(i=0;i<num_Stu;i++)
+					{	temp[i]=id[i].Cgpa;	}
+					sort(temp,num_Stu);//disp(num_Stu);
+					}
+					else if(sort_opt==5)
+					{
+					char temp_Name[num_Stu][30];
+					for(i=0;i<num_Stu;i++)
+					{	strcpy(temp_Name[i],id[i].name);	}
+					sort_String(temp_Name,num_Stu);
+				//	disp(num_Stu);  
+					}
+					else printf("Bad Input%c%c",7,7);
+				}
+				else if(opt==5)
+				{int Sel;printf("\nEnter the way you wanna search");
+				printf("\n1.Acc. Roll No.\n2.Acc. Marks\n3.Acc. Attendance\n4.Acc. CGPA\n5.Acc. Name\n");
+				scanf("%d",&Sel);	access(Sel);
+				}
+				else if(opt==6)
+				{
+					printf("\nThere are total  %d  Students\n",num_Stu);
+				}
+	printf("\nIf You want to perform more functions then click 1 or 0 to Exit\n");			
+	scanf("%d",&re_opt);
+	if(re_opt==1)
+	{Head_Dep(a,filename);}
+	else return;
+}
+void access(int Select)
+{
+	system("color 1f");
+    int act,i,j;
+	if(Select==1)
+	{printf("\nEnter The Roll No. \n");scanf("%d",&act);
+		for(i=0;i<num_Stu;i++)
+		{
+		if(id[i].Roll>=act)
+		{printf("\n %d        %d         %d      %f    %d\t     %s\n",i+1,id[i].Roll,id[i].Marks,id[i].Cgpa,id[i].Atten,id[i].name);}
+		}
+	}
+	else if(Select==2)
+	{
+		printf("\nEnter The Marks \n");scanf("%d",&act);
+		for(i=0;i<num_Stu;i++)
+		{
+		if(id[i].Marks>=act)
+		{printf("\n %d        %d         %d      %f    %d\t     %s\n",i+1,id[i].Roll,id[i].Marks,id[i].Cgpa,id[i].Atten,id[i].name);}
+		}
+	}
+	else if(Select==3)
+	{
+		printf("\nEnter The total Attendance \n");scanf("%d",&act);
+		for(i=0;i<num_Stu;i++)
+		{
+		if(id[i].Atten>=act)
+		{printf("\n %d        %d         %d      %f    %d\t     %s\n",i+1,id[i].Roll,id[i].Marks,id[i].Cgpa,id[i].Atten,id[i].name);}
+		}
+	}
+	else if(Select==4)
+	{
+		printf("\nEnter The CGPA Marks \n");scanf("%d",&act);
+		for(i=0;i<num_Stu;i++)
+		{
+		if(id[i].Cgpa>=act)
+		{printf("\n %d        %d         %d      %f    %d\t     %s\n",i+1,id[i].Roll,id[i].Marks,id[i].Cgpa,id[i].Atten,id[i].name);}
+		}
+	}
+	else if(Select==5)
+	{printf("Type your name starting letters to check details\n");
+	char a[30];scanf("%s",a);
+	int k=length(a);
+	for(i=0;i<num_Stu;i++)
+	{
+		for(j=0;j<k;j++)
+		{
+		if(id[i].name[j]==a[j])
+		{
+			if(j==k-1)printf("\n %d        %d         %d      %f    %d\t     %s\n",i+1,id[i].Roll,id[i].Marks,id[i].Cgpa,id[i].Atten,id[i].name);
+		}else break;
+		}
+		
+	}
+	}
+	else{
+		printf("Bad Input Please try again\nRe-enter your choice ");
+		scanf("%d",&Select);
+		access(Select);
+	}
+	return;
+}
+void remove(int n,char a[])
+{
+	FILE *fpointer;
+	num_Stu=0;
+	fpointer=fopen(a,"r");
+	char str[500][30];
+	int t,i,k=0;
+	while(!feof(fpointer))
+	{++num_Stu;
+	fgets(str[i],30,fpointer);++i;
+	}
+	fclose(fpointer); 
+/*	for(i=0;i<num_Stu;i++)
+	{
+		printf("%d   %s",i+1,str[i]);
+	}  */
+	
+	copy_file(a,str,num_Stu,n);
+//	fputs(temp,fpointer);
+//	fpointer=fopen(a,"w");
+//	num_Stu--;
+//	printf("\n\n");
+//	disp(num_Stu);
+return;	
+}
+void sort_String(char a[][30],int length)
+{
+	int i,j;FILE *fp;
+	node temp;fp=fopen("bh.txt","r");
+	char c[50][40];char m[40];int n=0;
+	while(!feof(fp))
+	{
+		fgets(c[n],40,fp);++n;
+	}fclose(fp);
+	char t[30];
+	for(i=0;i<length;i++)
+	{
+		for(j=0;j<i;j++)
+		{
+			if(strcmp(a[i],a[j])<0)
+			{
+			temp=id[i];strcpy(t,a[i]);strcpy(m,c[i]);
+			id[i]=id[j];strcpy(a[i],a[j]);strcpy(c[i],c[j]);
+			id[j]=temp;strcpy(a[j],t);strcpy(c[j],m);
+			}	
+		}
+	}
+	disp(num_Stu);
+	printf("\n Enter 1 if you want to get this sorted list on file else press 0\n");
+	int sel;scanf("%d",&sel);
+	if(sel==1){printf("\nEnter file name\n");
+	char fl[20];scanf("%s",fl);
+	fp=fopen(fl,"w+");
+	for(i=0;i<n;i++)
+	{
+		fprintf(fp,"%s\n",c[i]);
+	}fclose(fp);}
+	else return;	
+}
+void sort(int a[],int length)
+{
+	int i,j,t;FILE *fp;
+	node temp;fp=fopen("bh.txt","r");
+	char c[50][40];char m[40];int n=0;
+	while(!feof(fp))
+	{
+		fgets(c[n],40,fp);++n;
+	}fclose(fp);
+	for(i=0;i<length;i++)
+	{
+		for(j=0;j<i;j++)
+		{
+			if(a[i]<a[j])
+			{
+				temp=id[i];t=a[i];strcpy(m,c[i]);
+				id[i]=id[j];a[i]=a[j];strcpy(c[i],c[j]);
+				id[j]=temp;a[j]=t;strcpy(c[j],m);
+			}
+		}
+	}
+	disp(num_Stu);
+	printf("\n Enter 1 if you want to get this sorted list on file else press 0\n");
+	int sel;scanf("%d",&sel);
+	if(sel==1){printf("\nEnter file name\n");
+	char fl[20];scanf("%s",fl);
+	fp=fopen(fl,"w");
+	for(i=0;i<n;i++)
+	{
+		fputs(c[i],fp);
+	}fclose(fp);}
+	else return;
+}
+void insert(char a[30],int j)
+{
+//static int count=0;
+if(j==0)
+{
+id[count].Roll=atoi(a);
+//printf("\t%d",id[count].Roll);
+}
+else if(j==1)
+{
+id[count].Marks=atoi(a);
+//printf("\t%d",id[count].Marks);
+}
+else if(j==2)
+{
+id[count].Atten=atoi(a);	
+}
+else if(j==3)
+{
+id[count].Cgpa=atof(a);
+//printf("\t%s\n",a);
+}
+else if(j==4)
+{
+strcpy(id[count].name,(a+1)); //id[count].name=a;
+//printf("\t%s\n",id[count].name);
+count++;
+}
+return;}
+
+int length(char *a)
+{
+	int i;
+	for(i=0;a[i]!='\0';i++);
+	return i;
+}
+void copy(char a[50])
+{
+int i=0;
+int j=0,k=0;
+char temp[30];
+/*	if(a[i]=='\0')
+	{
+	j=0;
+	return;
+	}  */
+	if(a[i]==' ')
+	{return;}
+	for(i=0;i<=length(a);i++)
+	{
+		if(*(a+i)==' ' && j==4);
+		else if(*(a+i)==' '||*(a+i)=='\0')
+		{k=0;
+		insert(temp,j);
+		j++;
+		}
+		temp[k]=*(a+i);k++;
+		temp[k]='\0';
+	}
+/*while(a[i]!=' ')
+	{
+		
+	temp[i]=a[i];
+	i++;
+	temp[i]='\0';	
+	}
+	insert(temp,j);
+//	id[j].Roll=atoi(temp);
+//	printf("%d\t",id[j].Roll);
+	++j;
+	copy(a+i+1);*/
+	return;
+}
+void disp(int length)
+{system("cls");
+system("color 1f");
+printf(" Sr.No.   Roll No.   Marks   CGPA        Attendance     Name\n");
+for(int i=0;i<length;i++)
+	{
+		printf("\n %d        %d         %d      %.2f        %d          %s\n",i+1,id[i].Roll,id[i].Marks,id[i].Cgpa,id[i].Atten,id[i].name);
+	}
+}
+int main()
+{
+	
+	char filename[20],x,pass1[20],pass2[]="Vits_Hod_CS";
+	char pass3[]="Vits_Fac_CS";
+	int j,i,k=0;
+	printf("           **********WELCOME TO STUDENT DATABASE DATA HANDLER**********\n\n");
+	printf("\nPlease select your designation from the following Options.\n\n 1.  HOD\n 2.  Faculty\n 3.  Student\n\n");
+	int Select;
+	scanf("%d",&Select);
+	if(Select==1)
+	{
+	printf("\nPlease First Enter the Password to Access this\n");
+	x=getch();
+	while(1)
+	{
+		if(x==13){
+		break;}
+		pass1[k]=x;printf("*");
+		k++;x=getch();
+	}pass1[k]='\0';
+	if((strcmp(pass1,pass2))==0)
+	{
+	system("cls");
+	printf("///***ACCESS  GRANTED***///");
+	printf("\nPlease enter the Database File Location to Attach with this program\n");
+	scanf("%s",filename);
+	FILE *fp,*fp2;
+	count=0;
+	fp=fopen(filename,"r");
+	char c[30];
+	while(!feof(fp))
+	{
+	++num_Stu;
+	fgets(c,30,fp);
+	copy(c);
+	}
+	fclose(fp);
+	Head_Dep(1,filename);
+	}else printf("%c%c \nINVALID PASSWORD\n",7,7);
+	}
+	
+	else if(Select==2)
+	{
+	system("cls");	
+	printf("\nPlease First Enter the Password to Access this\n");
+	x=getch();
+	while(1)
+	{
+		if(x==13){
+		break;}
+		pass1[k]=x;printf("*");
+		k++;x=getch();
+	}pass1[k]='\0';
+	if((strcmp(pass1,pass3))==0)
+	{
+	system("cls");
+	printf("///***ACCESS  GRANTED***///");
+	Fac_Dep(1,"bh.txt");
+	}
+	else printf("%c%c \nINVALID PASSWORD\n",7,7);
+	
+	}
+	
+	else if(Select==3)
+	{update("bh.txt");system("cls");system("color 5f");
+	printf("Type your Roll No.");
+	char stu[20];int check_roll;scanf("%d",&check_roll);
+	for(int i=0;i<num_Stu;i++)
+	{
+		if(id[i].Roll==check_roll)
+		{	
+			printf("Now Enter Name");scanf("%s",stu);int k=length(stu);
+			if(id[i].name[0]==stu[0] && id[i].name[k-1]==stu[k-1] && id[i].name[k/2]==stu[k/2])
+			{
+			printf("%d      %d      %d    %d     %f    %s\n",i+1,id[i].Roll,id[i].Marks,id[i].Atten,id[i].Cgpa,id[i].name);
+			break;}
+			else {printf("%c\nYour Entry is not Present",7);break;return 0;
+			}
+			
+		}
+		else if(i==num_Stu-1)
+		{printf("%c%c\nBad User",7,7);return 0;}
+	}
+	}
+	else{
+		printf("Bad Input Please try again\nRe-enter your choice ");
+		scanf("%d",&Select);
+		access(Select);
+	}
+	
+	
+/*	FILE *fp,*fp2;
+	fp=fopen(filename,"r");
+	char c[30];
+	while(!feof(fp))
+	{
+	++num_Stu;
+	fgets(c,30,fp);
+	copy(c);
+	}
+	fclose(fp); */
+//	disp(num_Stu);
+	
+	
+	//access(Select);
+/*	int input;
+	scanf("%d",&input);
+	int temp[num_Stu];
+	if(input==1)
+		{for(i=0;i<num_Stu;i++)
+			{
+			temp[i]=id[i].Roll;
+			}
+			sort(temp,num_Stu);}
+	else if(input==2)
+	//		int temp[num_Stu];
+		{for(i=0;i<num_Stu;i++)
+			{
+			temp[i]=id[i].Marks;
+			}
+			sort(temp,num_Stu);}
+	else if(input==3)	
+		{char temp_Name[num_Stu][20];
+			for(i=0;i<num_Stu;i++)
+			{
+			strcpy(temp_Name[i],id[i].name);
+			}
+			sort_String(temp_Name,num_Stu);  }
+	else
+	{printf("Bad Input");}
+
+
+    int n;
+	printf("\nEnter sr no.to remove ");scanf("%d",&n);
+	remove(num_Stu,n,filename);		
+
+
+	fp2=fopen(filename,"a");
+	char add[30],ch;
+	printf("\n enter one new entry\n");
+	scanf("%s",add);
+	fprintf(fp2,"\n%s",add);
+	for(int i=1;i<=2;i++)
+	{
+		scanf("%s",add);
+		fprintf(fp2," %s",add);
+	}
+	fclose(fp2);
+*/
+/*	switch (input)
+	{
+		case 1:
+			for(i=0;i<num_Stu;i++)
+			{
+			temp[i]=id[i].Roll;
+			}
+			sort(temp,num_Stu);
+			break;	
+		case 2:
+		//	int temp[num_Stu];
+			for(i=0;i<num_Stu;i++)
+			{
+			temp[i]=id[i].Marks;
+			}
+			sort(temp,num_Stu);
+			break;
+		case 3:
+			char temp_Name[num_Stu][20];
+			for(i=0;i<num_Stu;i++)
+			{
+			strcpy(temp_Name[i],id[i].name);
+			}
+			sort_String(temp_Name,num_Stu);  
+			break;
+		default:
+			printf("Bad Input");
+			break;		
+	}  */
+/*	disp(num_Stu);
+	int temp[num_Stu];
+//	printf("\n\n%d\n\n",num_Stu);
+	for(i=0;i<num_Stu;i++)
+	{
+		temp[i]=id[i].Roll;
+	//	printf("%d",temp[i]);
+	}
+	sort(temp,num_Stu);  */  
+/*node temp1;
+for(i=0;i<num_Stu;i++)
+{
+	for(j=0;j<i;j++)
+	{
+		if(id[i].Roll<id[j].Roll)
+		{
+		printf("\n%d %d  is swapped %d %d\n",id[i].Roll,i,id[j].Roll,j);
+			temp1=id[i];
+			id[i]=id[j];
+			id[j]=temp1;
+		}
+	}
+}*/
+//disp(num_Stu);	
+//return 0;
+//system("pause");
+getch();
+return 0;
+}
